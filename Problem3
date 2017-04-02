@@ -1,0 +1,95 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LambdaAndLINQProblem3
+{
+    public class Program
+    {
+        static void Main()
+        {
+            var inputLine = Console.ReadLine();
+            var storage = new Dictionary<string, HashSet<string>>();
+
+
+            while (inputLine != "exit")
+            {
+                var inputData = inputLine.Split(new[] {'.','(',')' },StringSplitOptions.RemoveEmptyEntries).ToList();
+                var collection = inputData.First();
+  
+                for (int i = 1; i < inputData.Count; i++)
+                {
+                    if (!storage.ContainsKey(collection))
+                    {
+                        storage[collection] = new HashSet<string>();
+                    }
+                    storage[collection].Add(inputData[i]);
+                }
+
+                if (inputData.Count == 1 && storage.ContainsKey(inputData[0]))
+                {
+                    foreach (var st in storage[inputData[0]].OrderByDescending(st => st.Length).ThenByDescending(st => st.Distinct().Count()))
+                    {
+                        Console.WriteLine("* " + st);
+                    }
+
+                }
+                int num;
+                if (inputData.Count == 1 && int.TryParse(inputData[0], out num) && storage.Count > 0)
+                {
+                    storage = storage.OrderByDescending(kvp => kvp.Value.Count).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                    var the_smallest = storage.First().Value.OrderBy(str => str.Length).Take(num);
+
+                    foreach (var val in the_smallest)
+                    {
+                        Console.WriteLine("* " + val);
+                    }
+                }
+
+                inputLine = Console.ReadLine();
+            }
+
+            var finalInput = Console.ReadLine().Split(' ');
+            var method = finalInput.First();
+            var collectionOrAll = finalInput.Last();
+            var resultDict = new Dictionary<string, HashSet<string>>();
+
+            foreach (var kvp in storage.OrderByDescending(kvp => kvp.Value.Count).ThenByDescending(kvp => kvp.Value.Min(str => str.Length)))
+            {
+                if (storage[kvp.Key].Contains(method))
+                {
+                    if (!resultDict.ContainsKey(kvp.Key))
+                    {
+                        resultDict[kvp.Key] = new HashSet<string>();
+                    }
+                    resultDict[kvp.Key] = storage[kvp.Key];
+                }
+            }
+
+
+            if (collectionOrAll == "collection")
+            {
+                foreach (var colMeth in resultDict)
+                {
+                    Console.WriteLine(colMeth.Key);
+                }
+            }
+            else if (collectionOrAll == "all")
+           
+            {
+                foreach (var kvp in resultDict)
+                {
+                    Console.WriteLine(kvp.Key);
+                   foreach (var meth in resultDict[kvp.Key].OrderByDescending(meth => meth.Length))
+                    {
+                        Console.WriteLine("* " + meth);
+                    }
+                    
+                }
+            }
+            
+        }
+    }
+}
