@@ -1,0 +1,55 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LambdaAndLINQProblem2
+{
+    public class Program
+    {
+        static void Main()
+        {
+            var inputLine = Console.ReadLine();
+            var dataBase = new Dictionary<string,Dictionary<string, decimal>>();
+
+            while (inputLine != "end")
+            {
+                var input = inputLine.Split(new[] { ' ', '-', '>' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                var bank = input[0];
+                var account = input[1];
+                var balance = decimal.Parse(input[2]);
+
+                if (!dataBase.ContainsKey(bank))
+                {
+                    dataBase[bank] = new Dictionary<string, decimal>();
+                    dataBase[bank][account] = balance;
+                }
+                else
+                {
+                    if (!dataBase[bank].ContainsKey(account))
+                    {
+                        dataBase[bank][account] = balance;
+                    }
+                    else
+                    {
+                        dataBase[bank][account] += balance;
+                    }
+                }
+
+                inputLine = Console.ReadLine();
+                
+            }
+ 
+            foreach (var theBank in dataBase.OrderByDescending(theBank => theBank.Value.Sum(theAcc => theAcc.Value))
+                .ThenByDescending(theBank => theBank.Value.Max(theAcc => theAcc.Value)))
+            {               
+                foreach (var theAcc in theBank.Value.OrderByDescending(theAcc => theAcc.Value))
+                {
+                    Console.WriteLine($"{theAcc.Key} -> {theAcc.Value} ({theBank.Key})");
+                }
+
+            }
+        }
+    }
+}
