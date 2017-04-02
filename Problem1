@@ -1,0 +1,84 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LambdaAndLINQProblem1
+{
+    public class Problem1
+    {
+        static void Main()
+        {
+
+
+            var input = Console.ReadLine().Split(new[] { ' ', '=', '>' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            var parameter = input.First();
+            var expression = input.Last();
+            var paramExpr = new Dictionary<string, string>();
+            var allLambadas = new Dictionary<string, List<string>>();
+            var counter = 0;
+
+            while (input.First() != "lambada")
+            {
+                if (input.First() == "dance")
+                {
+                    counter++;
+                    paramExpr = paramExpr
+                        .Select(kvp => new KeyValuePair<string, string>(kvp.Key, kvp.Key + "." + kvp.Value))
+                        .ToDictionary(kvp => kvp.Key , kvp => kvp.Value);
+                }
+                else
+                {
+                  
+                    parameter = input.First();
+                    expression = input.Last();
+
+                    if (!paramExpr.ContainsKey(parameter))
+                    {
+                        paramExpr[parameter] = expression;
+                    }
+                    else
+                    {
+                        paramExpr[parameter] = expression;
+                    }
+
+                }
+                input = Console.ReadLine().Split(new[] { ' ', '=', '>' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                if (input[0] == "lambada" && counter > 0)
+                {
+                    counter = 0;
+                    foreach (var key in paramExpr.Keys)
+                    {
+                        if (!allLambadas.ContainsKey(key))
+                        {
+                            allLambadas[key] = new List<string>();
+                        }
+                        allLambadas[key].Add(paramExpr[key]);
+                    }
+                }
+            }
+
+            if (allLambadas.Count() > 0)
+            {
+                foreach (var key in allLambadas.Keys)
+                {
+                    foreach (var lambda in allLambadas[key])
+                    {
+                        Console.WriteLine(key + " => " + lambda);
+                    }
+
+                }
+            }
+            else
+            {
+                foreach (var key in paramExpr.Keys)
+                {
+                    Console.WriteLine(key + " => " + paramExpr[key]);
+                }
+            }
+            
+        }
+    }
+
+ }
